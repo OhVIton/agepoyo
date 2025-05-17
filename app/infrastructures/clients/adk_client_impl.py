@@ -59,7 +59,7 @@ class AdkClientImpl(AgentClient):
 
         return ''.join([event.content.parts[0].text for event in generator])
 
-    def __llm_model_to_agent_model(self, llm_model: LlmModel) -> str:
+    def __llm_model_to_agent_model(self, llm_model: LlmModel) -> LiteLlm|str:
         match llm_model:
             case LlmModel.GPT_41:
                 return LiteLlm(model='gpt-4.1')
@@ -72,8 +72,6 @@ class AdkClientImpl(AgentClient):
                 return 'user'
             case ConversationRole.ASSISTANT:
                 return 'model'
-            case _:
-                return 'user'
 
     def __conversation_to_agent_parts(
         self, conversation_request: ConversationRequest

@@ -7,4 +7,4 @@ class TestClientImpl(AgentClient):
 
     def ask(self, conversation: ConversationRequest) -> str:
         """ダミー応答を返す."""
-        return 'テスト応答: ' + (conversation.latest_user_message() or '(empty)')
+        return 'テスト応答: ' + (conversation.latest_user_message().content or '(empty)')

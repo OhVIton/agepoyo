@@ -20,11 +20,23 @@ dev = [
     "ruff>=0.11.10",
 ]
 
-[tool.ruff]
-exclude = ['app/gen']
-line-length = 88
-[tool.ruff.lint]
-select = ['ALL']
-ignore = ['D100', 'D104', 'ANN401', 'S101', 'S311', 'PLR0913', 'PLR2004', 'D203', 'D212', 'Q000', 'Q003', 'COM812', 'FIX002', 'TD002', 'TD003']
-[tool.ruff.format]
-quote-style = 'single'
+[tool.mypy]
+ignore_missing_imports = true
+strict = true
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+show_error_codes = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = [
+    "app.main",
+    "app.gen.*",
+    "app.controllers.*",
+    "app.tests.*"
+]
+ignore_errors = true
+
