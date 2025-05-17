@@ -1,5 +1,5 @@
-from domains.conversation.agent_client import AgentClient
-from domains.conversation.request import ConversationRequest
+from app.domains.conversation.agent_client import AgentClient
+from app.domains.conversation.request import ConversationRequest
 from google.adk.agents import Agent
 import os
 

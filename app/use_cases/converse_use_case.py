@@ -1,8 +1,8 @@
 from datetime import UTC, datetime
 
 from app.domains.conversation.agent_client import AgentClient
-from domains.conversation.request import ConversationRequest
-from domains.conversation.response import ContentType, ConversationResponse
+from app.domains.conversation.request import ConversationRequest
+from app.domains.conversation.response import ContentType, ConversationResponse
 
 
 class ConverseUseCase:
