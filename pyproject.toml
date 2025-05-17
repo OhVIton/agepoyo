@@ -21,6 +21,6 @@ exclude = ['app/gen']
 line-length = 88
 [tool.ruff.lint]
 select = ['ALL']
-ignore = ['D100', 'D104', 'ANN401', 'S101', 'S311', 'PLR0913', 'PLR2004', 'D203', 'D212', 'Q000', 'Q003', 'COM812']
+ignore = ['D100', 'D104', 'ANN401', 'S101', 'S311', 'PLR0913', 'PLR2004', 'D203', 'D212', 'Q000', 'Q003', 'COM812', 'FIX002', 'TD002', 'TD003']
 [tool.ruff.format]
 quote-style = 'single'
