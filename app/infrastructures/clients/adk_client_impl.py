@@ -18,15 +18,15 @@ class AdkClientImpl(AgentClient):
 
     def ask(self, conversation_request: ConversationRequest) -> str:
         agent = Agent(
-            name="adk_client",
-            description="ADK Client",
+            name='adk_client',
+            description='ADK Client',
             model=self.__llm_model_to_agent_model(conversation_request.model),
         )
         session_service = InMemorySessionService()
 
-        APP_NAME = "adk_client_app"
-        USER_ID = "user_0"
-        SESSION_ID = "session_0"
+        APP_NAME = 'adk_client_app'
+        USER_ID = 'user_0'
+        SESSION_ID = 'session_0'
 
         session_service.create_session(
             app_name=APP_NAME,
@@ -43,37 +43,33 @@ class AdkClientImpl(AgentClient):
         generator: Generator[Event, None, None] = runner.run(
             new_message=Content(
                 parts=self.__conversation_to_agent_parts(conversation_request),
-                role=self.__role_to_agent_role(conversation_request.latest_user_message().role),
+                role=self.__role_to_agent_role(
+                    conversation_request.latest_user_message().role
+                ),
             ),
             user_id=USER_ID,
             session_id=SESSION_ID,
         )
 
-        return "".join(
-            [event.content.parts[0].text for event in generator]
-        )
+        return ''.join([event.content.parts[0].text for event in generator])
 
     def __llm_model_to_agent_model(self, llm_model: LlmModel) -> str:
-        match (llm_model):
+        match llm_model:
             case LlmModel.GPT_41:
-                return LiteLlm(model="gpt-4.1")
+                return LiteLlm(model='gpt-4.1')
             case _:
-                return "gemini-2.0-flash"
+                return 'gemini-2.0-flash'
 
     def __role_to_agent_role(self, role: ConversationRole) -> str:
-        match (role):
+        match role:
             case ConversationRole.USER:
-                return "user"
+                return 'user'
             case ConversationRole.ASSISTANT:
-                return "model"
+                return 'model'
             case _:
-                return "user"
+                return 'user'
 
-    def __conversation_to_agent_parts(self, conversation_request: ConversationRequest) -> list[Part]:
-        return [
-            Part(
-                text=conversation_request
-                    .latest_user_message()
-                    .content
-            )
-        ]
+    def __conversation_to_agent_parts(
+        self, conversation_request: ConversationRequest
+    ) -> list[Part]:
+        return [Part(text=conversation_request.latest_user_message().content)]

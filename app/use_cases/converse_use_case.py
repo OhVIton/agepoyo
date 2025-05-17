@@ -18,5 +18,5 @@ class ConverseUseCase:
         return ConversationResponse(
             content_type=ContentType.TEXT,
             content=llm_response,
-            generated_at=datetime.now(UTC)
+            generated_at=datetime.now(UTC),
         )

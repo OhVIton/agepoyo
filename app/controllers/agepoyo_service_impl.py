@@ -31,10 +31,8 @@ class AgepoyoServiceImpl(schema_pb2_grpc.AgepoyoServiceServicer):
     def converse(self, request: Any, _context: Any) -> schema_pb2.ConversationResponse:
         """会話リクエストを処理し、レスポンスを返す."""
         messages = [
-            ConversationMessage(
-                role=ConversationRole(msg.role),
-                content=msg.content
-            ) for msg in request.messages
+            ConversationMessage(role=ConversationRole(msg.role), content=msg.content)
+            for msg in request.messages
         ]
         model = LlmModel(request.model)
         domain_request = ConversationRequest(messages=messages, model=model)
@@ -50,11 +48,11 @@ class AgepoyoServiceImpl(schema_pb2_grpc.AgepoyoServiceServicer):
         return schema_pb2.ConversationResponse(
             content_type=domain_response.content_type.value,
             content=domain_response.content,
-            generated_at=ts
+            generated_at=ts,
         )
 
     def converse_stream(self, _request: Any, context: Any) -> None:
         """未実装: ストリーム会話API."""
         context.set_code(12)
-        context.set_details("Method not implemented!")
+        context.set_details('Method not implemented!')
         raise NotImplementedError

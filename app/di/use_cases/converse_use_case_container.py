@@ -10,7 +10,4 @@ class ConverseUseCaseContainer(containers.DeclarativeContainer):
     agent_client = providers.Singleton(
         AdkClientImpl,
     )
-    converse_use_case = providers.Factory(
-        ConverseUseCase,
-        agent=agent_client
-    )
+    converse_use_case = providers.Factory(ConverseUseCase, agent=agent_client)

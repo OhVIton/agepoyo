@@ -7,12 +7,14 @@ from app.di.use_cases.converse_use_case_container import ConverseUseCaseContaine
 class ApplicationContainer(containers.DeclarativeContainer):
     """アプリケーション全体のDIコンテナ."""
 
-    wiring_config = containers.WiringConfiguration(packages=[
-        "app.controllers",
-        "app.use_cases",
-        "app.services",
-        "app.infrastructures",
-    ])
+    wiring_config = containers.WiringConfiguration(
+        packages=[
+            'app.controllers',
+            'app.use_cases',
+            'app.services',
+            'app.infrastructures',
+        ]
+    )
 
     converse_use_case = providers.DelegatedFactory(
         ConverseUseCaseContainer.converse_use_case

@@ -11,6 +11,7 @@ class ContentType(Enum):
     VIDEO = 4
     FILE = 5
 
+
 class ConversationResponse:
     """会話応答."""
 

@@ -1,4 +1,3 @@
-
 from .llm_model import LlmModel
 from .message import ConversationMessage
 from .role import ConversationRole
@@ -19,5 +18,5 @@ class ConversationRequest:
                 return msg
         return ConversationMessage(
             role=ConversationRole.USER,
-            content="",
+            content='',
         )
