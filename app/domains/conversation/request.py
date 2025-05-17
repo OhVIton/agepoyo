@@ -12,9 +12,12 @@ class ConversationRequest:
         self.messages = messages
         self.model = model
 
-    def latest_user_message(self) -> str:
+    def latest_user_message(self) -> ConversationMessage:
         """直近のユーザーメッセージを返す."""
         for msg in reversed(self.messages):
             if msg.role == ConversationRole.USER:
-                return msg.content
-        return ""
+                return msg
+        return ConversationMessage(
+            role=ConversationRole.USER,
+            content="",
+        )
