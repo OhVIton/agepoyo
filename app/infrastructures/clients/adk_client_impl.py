@@ -1,7 +1,7 @@
-from collections.abc import Generator
+
+from typing import TYPE_CHECKING
 
 from google.adk.agents import Agent
-from google.adk.events import Event
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
@@ -12,11 +12,17 @@ from app.domains.conversation.llm_model import LlmModel
 from app.domains.conversation.request import ConversationRequest
 from app.domains.conversation.role import ConversationRole
 
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from google.adk.events import Event
+
 
 class AdkClientImpl(AgentClient):
     """Agent Client Using ADK."""
 
     def ask(self, conversation_request: ConversationRequest) -> str:
+        """Ask a question to the agent."""
         agent = Agent(
             name='adk_client',
             description='ADK Client',
@@ -24,18 +30,18 @@ class AdkClientImpl(AgentClient):
         )
         session_service = InMemorySessionService()
 
-        APP_NAME = 'adk_client_app'
-        USER_ID = 'user_0'
-        SESSION_ID = 'session_0'
+        app_name = 'adk_client_app'
+        user_id = 'user_0'
+        session_id = 'session_0'
 
         session_service.create_session(
-            app_name=APP_NAME,
-            user_id=USER_ID,
-            session_id=SESSION_ID,
+            app_name=app_name,
+            user_id=user_id,
+            session_id=session_id,
         )
 
         runner = Runner(
-            app_name=APP_NAME,
+            app_name=app_name,
             agent=agent,
             session_service=session_service,
         )
@@ -47,8 +53,8 @@ class AdkClientImpl(AgentClient):
                     conversation_request.latest_user_message().role
                 ),
             ),
-            user_id=USER_ID,
-            session_id=SESSION_ID,
+            user_id=user_id,
+            session_id=session_id,
         )
 
         return ''.join([event.content.parts[0].text for event in generator])
