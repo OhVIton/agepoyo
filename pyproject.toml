@@ -15,3 +15,12 @@ dev = [
     "mypy>=1.15.0",
     "ruff>=0.11.10",
 ]
+
+[tool.ruff]
+exclude = ['app/gen']
+line-length = 88
+[tool.ruff.lint]
+select = ['ALL']
+ignore = ['D100', 'D104', 'ANN401', 'S101', 'S311', 'PLR0913', 'PLR2004', 'D203', 'D212', 'Q000', 'Q003', 'COM812']
+[tool.ruff.format]
+quote-style = 'single'
