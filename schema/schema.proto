@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package agepoyo;
+
+import "google/protobuf/timestamp.proto";
+
+service AgepoyoService {
+    rpc converse(ConversationRequest) returns (ConversationResponse);
+    rpc converseStream(ConversationRequest) returns (stream ConversationResponse);
+}
+
+enum ConversationRole {
+    UNSPECIFIED = 0;
+    USER = 1;
+    ASSISTANT = 2;
+}
+
+enum LlmModel {
+    UNSPECIFIED = 0;
+    GPT_41 = 1;
+}
+
+message ConversationMessage {
+    ConversationRole role = 1;
+    string content = 2;
+}
+
+message ConversationRequest {
+    repeated ConversationMessage messages = 1;
+    LlmModel model = 2;
+}
+
+enum ContentType {
+    UNSPECIFIED = 0;
+    TEXT = 1;
+    IMAGE = 2;
+    AUDIO = 3;
+    VIDEO = 4;
+    FILE = 5;
+}
+
+message ConversationResponse {
+    ContentType content_type = 1;
+    string content = 2;
+    google.protobuf.Timestamp generated_at = 3;
+}
