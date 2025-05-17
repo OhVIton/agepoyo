@@ -18,9 +18,9 @@ def serve() -> None:
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     schema_pb2_grpc.add_AgepoyoServiceServicer_to_server(AgepoyoServiceImpl(), server)
     server.add_insecure_port(f'[::]:{PORT}')
-    logger.info(f"Starting gRPC Server: [::]:{PORT}")
+    logger.info("Starting gRPC Server")
     server.start()
-    logger.info(f"Server started, listening on [::]:{PORT}")
+    logger.info("Server started, listening")
     server.wait_for_termination()
 
 
