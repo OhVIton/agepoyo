@@ -33,6 +33,7 @@ flowchart TD
     app --> infrastructures
     app --> controllers
     app --> tests
+    app --> gen
 
     domains --> domainA
     domainA --> xxx_entity.py(xxx_entity.py)

@@ -10,13 +10,13 @@ service AgepoyoService {
 }
 
 enum ConversationRole {
-    UNSPECIFIED = 0;
+    CONVERSATION_ROLE_UNSPECIFIED = 0;
     USER = 1;
     ASSISTANT = 2;
 }
 
 enum LlmModel {
-    UNSPECIFIED = 0;
+    LLM_MODEL_UNSPECIFIED = 0;
     GPT_41 = 1;
 }
 
@@ -31,7 +31,7 @@ message ConversationRequest {
 }
 
 enum ContentType {
-    UNSPECIFIED = 0;
+    CONTENT_TYPE_UNSPECIFIED = 0;
     TEXT = 1;
     IMAGE = 2;
     AUDIO = 3;
