@@ -34,6 +34,7 @@ flowchart TD
     app --> controllers
     app --> tests
     app --> gen
+    app --> di
 
     domains --> domainA
     domainA --> xxx_entity.py(xxx_entity.py)
@@ -42,8 +43,8 @@ flowchart TD
 
     services --> xxx_service.py(xxx_service.py)
 
-    infrastructures --> clients
-    clients --> xxx_client_impl.py(xxx_client.py)
+    infrastructures --> infra-clients[clients]
+    infra-clients --> xxx_client_impl.py(xxx_client.py)
     infrastructures --> repositories
     repositories --> xxx_repository_impl.py(xxx_repository_impl.py)
 
@@ -51,4 +52,11 @@ flowchart TD
 
     tests --> e2e
     tests --> unit
+
+    di --> application.py(application.py)
+    di --> di-use_cases[use_cases]
+    di --> di-services[services]
+    di --> di-domains[domains]
+    di-domains --> domain-clients[clients]
+    di-domains --> di-repositories[repositories]
 ```

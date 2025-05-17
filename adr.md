@@ -38,3 +38,23 @@ Date: 2025-05-19 JST
 - ruffは、pythonの静的解析ツールであり、高速に動作するため、採用した
 - mypyは、pythonの型チェックツールであり、型安全性を高めるため、採用した
 - bufは、protobufのスキーマ管理ツールであり、スキーマのバージョン管理・コード生成を容易にするため、採用した
+
+# 依存性注入ライブラリの選定
+
+Date: 2025-05-19 JST
+
+## Status
+
+- Accepted
+
+## Decision
+
+依存性注入（DI）ライブラリとして、`dependency_injector` を採用する。
+
+## Context
+
+- PythonのDIライブラリには主に `dependency_injector` と `injector` がある
+- `dependency_injector` は型安全性・補完性、構成管理、スコープ管理、設定ファイル連携、テスト容易性など、実運用に必要な機能が豊富
+- ドキュメントや事例も多く、パフォーマンスも良い
+- `injector` はシンプルだが、機能が最小限であり、型ヒントや補完もやや弱い
+- 本プロジェクトはgRPCや外部API連携、テスト容易性、将来的な拡張性を重視するため、`dependency_injector` を採用する
