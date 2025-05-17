@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from app.controllers.agepoyo_service_impl import AgepoyoServiceImpl
 from app.di.application import ApplicationContainer
-from app.gen.schema import schema_pb2_grpc
+from app.gen import schema_pb2_grpc
 
 PORT = 50000
 

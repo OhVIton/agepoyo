@@ -8,7 +8,7 @@ from app.domains.conversation.llm_model import LlmModel
 from app.domains.conversation.message import ConversationMessage
 from app.domains.conversation.request import ConversationRequest
 from app.domains.conversation.role import ConversationRole
-from app.gen.schema import schema_pb2, schema_pb2_grpc
+from app.gen import schema_pb2, schema_pb2_grpc
 from app.use_cases.converse_use_case import ConverseUseCase
 
 if TYPE_CHECKING:
