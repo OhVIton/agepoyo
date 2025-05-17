@@ -1,9 +1,12 @@
+import time
+from multiprocessing import Process
+
 import grpc
 import pytest
-from app.main import serve
-from multiprocessing import Process
-import time
+
 from app.gen.schema import schema_pb2, schema_pb2_grpc
+from app.main import serve
+
 
 # サーバーを別プロセスで起動
 @pytest.fixture(scope="module", autouse=True)

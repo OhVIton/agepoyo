@@ -1,13 +1,15 @@
-from app.gen.schema import schema_pb2_grpc, schema_pb2
-from dependency_injector.wiring import inject, Provide
-from app.di.application import ApplicationContainer
-from app.use_cases.converse_use_case import ConverseUseCase
-from app.domains.conversation.message import ConversationMessage
-from app.domains.conversation.role import ConversationRole
-from app.domains.conversation.request import ConversationRequest
-from app.domains.conversation.llm_model import LlmModel
-from app.domains.conversation.response import ContentType, ConversationResponse
+from dependency_injector.wiring import Provide, inject
 from google.protobuf.timestamp_pb2 import Timestamp
+
+from app.di.application import ApplicationContainer
+from app.domains.conversation.llm_model import LlmModel
+from app.domains.conversation.message import ConversationMessage
+from app.domains.conversation.request import ConversationRequest
+from app.domains.conversation.response import ConversationResponse
+from app.domains.conversation.role import ConversationRole
+from app.gen.schema import schema_pb2, schema_pb2_grpc
+from app.use_cases.converse_use_case import ConverseUseCase
+
 
 class AgepoyoServiceImpl(schema_pb2_grpc.AgepoyoServiceServicer):
     @inject

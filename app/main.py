@@ -1,9 +1,10 @@
-from concurrent import futures
-import grpc
 import logging
-from app.di.application import ApplicationContainer
-from dependency_injector.wiring import inject, Provide
+from concurrent import futures
+
+import grpc
+
 from app.controllers.agepoyo_service_impl import AgepoyoServiceImpl
+from app.di.application import ApplicationContainer
 from app.gen.schema import schema_pb2_grpc
 
 PORT = 50000

@@ -1,7 +1,9 @@
+
+from google.adk.agents import Agent
+
 from app.domains.conversation.agent_client import AgentClient
 from app.domains.conversation.request import ConversationRequest
-from google.adk.agents import Agent
-import os
+
 
 class ADKClientImpl(AgentClient):
     """ADKを利用したLLMクライアントの実装(インフラ層)."""
@@ -18,7 +20,7 @@ class ADKClientImpl(AgentClient):
             api_key=api_key,
         )
 
-    def ask(self, conversation: ConversationRequest) -> str:  # noqa: ARG002
+    def ask(self, conversation: ConversationRequest) -> str:
         """ADK経由でOpenAI APIに問い合わせて応答を返す."""
         messages = [
             {"role": "user" if m.role.name == "USER" else "assistant", "content": m.content}

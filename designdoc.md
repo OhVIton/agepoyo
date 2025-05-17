@@ -55,8 +55,4 @@ flowchart TD
 
     di --> application.py(application.py)
     di --> di-use_cases[use_cases]
-    di --> di-services[services]
-    di --> di-domains[domains]
-    di-domains --> domain-clients[clients]
-    di-domains --> di-repositories[repositories]
 ```
