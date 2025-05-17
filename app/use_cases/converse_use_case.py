@@ -1,20 +1,20 @@
 from datetime import UTC, datetime
 
-from domains.conversation.agent_interface import AgentInterface
-from domains.conversation.conversation import Conversation
+from app.domains.conversation.agent_client import AgentClient
+from domains.conversation.request import ConversationRequest
 from domains.conversation.response import ContentType, ConversationResponse
 
 
 class ConverseUseCase:
     """会話ユースケース."""
 
-    def __init__(self, agent: AgentInterface) -> None:
+    def __init__(self, agent: AgentClient) -> None:
         """ユースケース初期化."""
         self.agent = agent
 
-    def execute(self, conversation: Conversation) -> ConversationResponse:
+    def execute(self, request: ConversationRequest) -> ConversationResponse:
         """会話を実行し応答を返す."""
-        llm_response = self.agent.ask(conversation)
+        llm_response = self.agent.ask(request)
         return ConversationResponse(
             content_type=ContentType.TEXT,
             content=llm_response,

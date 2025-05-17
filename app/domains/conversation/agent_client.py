@@ -1,11 +1,11 @@
-from typing import Protocol
+from abc import ABC, abstractmethod
 
 from .request import ConversationRequest
 
-
-class AgentInterface(Protocol):
+class AgentClient(ABC):
     """LLMエージェントの抽象インターフェース."""
 
+    @abstractmethod
     def ask(self, conversation: ConversationRequest) -> str:
         """会話リクエストを受けて応答を返す."""
-        ...
+        pass
