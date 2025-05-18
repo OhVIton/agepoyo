@@ -5,7 +5,7 @@ from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 from google.genai.types import Content, Part
 
 from app.domains.conversation.agent_client import AgentClient
@@ -27,18 +27,21 @@ class AdkClientImpl(AgentClient):
 
         common_exit_stack = AsyncExitStack()
 
-        search_tools, _ = await MCPToolset.from_server(
-            connection_params=SseServerParams(
-                url="https://mcp.mcpoogle.com/sse",
+        fetch_tools, _ = await MCPToolset.from_server(
+            connection_params=StdioServerParameters(
+                command='uvx',
+                args=[
+                    "mcp-server-fetch"
+                ],
+                common_exit_stack=common_exit_stack,
             ),
-            async_exit_stack=common_exit_stack,
         )
 
         agent = Agent(
             name="adk_client",
             description="ADK Client",
             model=self.__llm_model_to_agent_model(conversation_request.model),
-            tools=[*search_tools],
+            tools=[*fetch_tools],
         )
         session_service = InMemorySessionService()
 

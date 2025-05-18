@@ -55,9 +55,14 @@ class AgepoyoServiceImpl(agepoyo_pb2_grpc.AgepoyoServiceServicer):
         domain_request = ConversationRequest(messages=messages, model=model)
 
         # ユースケース呼び出し
-        domain_response: ConversationResponse = self.converse_use_case.call(
-            domain_request
-        )
+        try:
+            domain_response: ConversationResponse = self.converse_use_case.call(
+                domain_request
+            )
+        except Exception as e:
+            context.set_code(StatusCode.INTERNAL)
+            context.set_details("Internal server error")
+            raise e
 
         # ドメインレスポンス→protobufレスポンス変換
         ts = Timestamp()
