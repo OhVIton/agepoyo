@@ -6,14 +6,14 @@ from app.domains.conversation.request import ConversationRequest
 from app.domains.conversation.response import ContentType, ConversationResponse
 
 
-class ConverseUseCase:
-    """会話ユースケース."""
+class ConverseWithAgentUseCase:
+    """Agentと会話する."""
 
     def __init__(self, agent: AgentClient) -> None:
         """ユースケース初期化."""
         self.agent = agent
 
-    def execute(self, request: ConversationRequest) -> ConversationResponse:
+    def call(self, request: ConversationRequest) -> ConversationResponse:
         """会話を実行し応答を返す."""
         llm_response = asyncio.run(self.agent.ask(request))
         return ConversationResponse(
