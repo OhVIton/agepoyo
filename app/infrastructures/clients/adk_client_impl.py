@@ -61,18 +61,28 @@ class AdkClientImpl(AgentClient):
             session_service=session_service,
         )
 
-        generator: Generator[Event, None, None] = runner.run(
+        events = runner.run_async(
+            user_id=user_id,
+            session_id=session_id,
             new_message=Content(
                 parts=self.__conversation_to_agent_parts(conversation_request),
                 role=self.__role_to_agent_role(
                     conversation_request.latest_user_message().role
                 ),
             ),
-            user_id=user_id,
-            session_id=session_id,
         )
 
-        return "".join([event.content.parts[0].text for event in generator])
+        text = ""
+        async for event in events:
+            if event.content:
+                text += "".join(
+                    [part.text for part in event.content.parts if part.text]
+                )
+                print(text)
+
+        await common_exit_stack.aclose()
+
+        return text
 
     def __llm_model_to_agent_model(self, llm_model: LlmModel) -> LiteLlm | str:
         match llm_model:
