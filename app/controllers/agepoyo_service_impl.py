@@ -54,5 +54,5 @@ class AgepoyoServiceImpl(schema_pb2_grpc.AgepoyoServiceServicer):
     def converse_stream(self, _request: Any, context: Any) -> None:
         """未実装: ストリーム会話API."""
         context.set_code(12)
-        context.set_details('Method not implemented!')
+        context.set_details("Method not implemented!")
         raise NotImplementedError

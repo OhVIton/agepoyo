@@ -9,10 +9,10 @@ class ApplicationContainer(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
         packages=[
-            'app.controllers',
-            'app.use_cases',
-            'app.services',
-            'app.infrastructures',
+            "app.controllers",
+            "app.use_cases",
+            "app.services",
+            "app.infrastructures",
         ]
     )
 

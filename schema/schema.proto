@@ -18,8 +18,11 @@ enum ConversationRole {
 enum LlmModel {
     LLM_MODEL_UNSPECIFIED = 0;
     GPT_41 = 1;
+    GPT_4O = 2;
 
     GEMINI_20_FLASH = 20;
+
+    CLAUDE_37_SONNET = 40;
 }
 
 message ConversationMessage {

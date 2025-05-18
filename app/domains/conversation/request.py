@@ -18,5 +18,5 @@ class ConversationRequest:
                 return msg
         return ConversationMessage(
             role=ConversationRole.USER,
-            content='',
+            content="",
         )

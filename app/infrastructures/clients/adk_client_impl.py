@@ -1,10 +1,11 @@
-
+from contextlib import AsyncExitStack
 from typing import TYPE_CHECKING
 
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams
 from google.genai.types import Content, Part
 
 from app.domains.conversation.agent_client import AgentClient
@@ -21,18 +22,29 @@ if TYPE_CHECKING:
 class AdkClientImpl(AgentClient):
     """Agent Client Using ADK."""
 
-    def ask(self, conversation_request: ConversationRequest) -> str:
+    async def ask(self, conversation_request: ConversationRequest) -> str:
         """Ask a question to the agent."""
+
+        common_exit_stack = AsyncExitStack()
+
+        search_tools, _ = await MCPToolset.from_server(
+            connection_params=SseServerParams(
+                url="https://mcp.mcpoogle.com/sse",
+            ),
+            async_exit_stack=common_exit_stack,
+        )
+
         agent = Agent(
-            name='adk_client',
-            description='ADK Client',
+            name="adk_client",
+            description="ADK Client",
             model=self.__llm_model_to_agent_model(conversation_request.model),
+            tools=[*search_tools],
         )
         session_service = InMemorySessionService()
 
-        app_name = 'adk_client_app'
-        user_id = 'user_0'
-        session_id = 'session_0'
+        app_name = "adk_client_app"
+        user_id = "user_0"
+        session_id = "session_0"
 
         session_service.create_session(
             app_name=app_name,
@@ -57,21 +69,25 @@ class AdkClientImpl(AgentClient):
             session_id=session_id,
         )
 
-        return ''.join([event.content.parts[0].text for event in generator])
+        return "".join([event.content.parts[0].text for event in generator])
 
-    def __llm_model_to_agent_model(self, llm_model: LlmModel) -> LiteLlm|str:
+    def __llm_model_to_agent_model(self, llm_model: LlmModel) -> LiteLlm | str:
         match llm_model:
             case LlmModel.GPT_41:
-                return LiteLlm(model='gpt-4.1')
+                return LiteLlm(model="gpt-4.1")
+            case LlmModel.GPT_4O:
+                return LiteLlm(model="gpt-4o")
+            case LlmModel.CLAUDE_37_SONNET:
+                return LiteLlm(model="claude-3-7-sonnet-20250219")
             case _:
-                return 'gemini-2.0-flash'
+                return "gemini-2.0-flash"
 
     def __role_to_agent_role(self, role: ConversationRole) -> str:
         match role:
             case ConversationRole.USER:
-                return 'user'
+                return "user"
             case ConversationRole.ASSISTANT:
-                return 'model'
+                return "model"
 
     def __conversation_to_agent_parts(
         self, conversation_request: ConversationRequest
