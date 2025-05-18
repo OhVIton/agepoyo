@@ -5,8 +5,8 @@ package agepoyo;
 import "google/protobuf/timestamp.proto";
 
 service AgepoyoService {
-    rpc converse(ConversationRequest) returns (ConversationResponse);
-    rpc converseStream(ConversationRequest) returns (stream ConversationResponse);
+    rpc converseWithAgent(ConversationRequest) returns (ConversationResponse);
+    rpc converseWithAgentStream(ConversationRequest) returns (stream ConversationResponse);
 }
 
 enum ConversationRole {

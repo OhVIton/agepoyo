@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from app.controllers.agepoyo_service_impl import AgepoyoServiceImpl
 from app.di.application import ApplicationContainer
-from app.gen import schema_pb2_grpc
+from app.gen import agepoyo_pb2_grpc
 
 PORT = 50000
 
@@ -21,7 +21,7 @@ def serve() -> None:
     container.wire(modules=["app.controllers.agepoyo_service_impl"])
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    schema_pb2_grpc.add_AgepoyoServiceServicer_to_server(AgepoyoServiceImpl(), server)
+    agepoyo_pb2_grpc.add_AgepoyoServiceServicer_to_server(AgepoyoServiceImpl(), server)
     server.add_insecure_port(f"[::]:{PORT}")
 
     logger.info("Starting gRPC Server")

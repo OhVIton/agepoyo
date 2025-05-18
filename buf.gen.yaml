@@ -1,8 +1,10 @@
 version: v2
 inputs:
-  - proto_file: 'schema/schema.proto'
+  - proto_file: 'schema/agepoyo.proto'
 plugins:
   - remote: buf.build/protocolbuffers/python
     out: app/gen
   - remote: buf.build/grpc/python
+    out: app/gen
+  - remote: buf.build/protocolbuffers/pyi:v31.0
     out: app/gen

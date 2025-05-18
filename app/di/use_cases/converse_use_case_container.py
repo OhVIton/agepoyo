@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
 from app.infrastructures.clients.adk_client_impl import AdkClientImpl
-from app.use_cases.converse_use_case import ConverseUseCase
+from app.use_cases.converse_with_agent_use_case import ConverseWithAgentUseCase
 
 
 class ConverseUseCaseContainer(containers.DeclarativeContainer):
@@ -10,4 +10,4 @@ class ConverseUseCaseContainer(containers.DeclarativeContainer):
     agent_client = providers.Singleton(
         AdkClientImpl,
     )
-    converse_use_case = providers.Factory(ConverseUseCase, agent=agent_client)
+    converse_use_case = providers.Factory(ConverseWithAgentUseCase, agent=agent_client)

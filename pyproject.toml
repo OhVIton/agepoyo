@@ -35,7 +35,6 @@ pretty = true
 module = [
     "app.main",
     "app.gen.*",
-    "app.controllers.*",
     "app.tests.*"
 ]
 ignore_errors = true

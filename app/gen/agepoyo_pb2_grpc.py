@@ -3,7 +3,7 @@
 
 import grpc
 
-import schema_pb2 as schema__pb2
+import agepoyo_pb2 as agepoyo__pb2
 
 
 class AgepoyoServiceStub(object):
@@ -15,16 +15,16 @@ class AgepoyoServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.converse = channel.unary_unary(
-            "/agepoyo.AgepoyoService/converse",
-            request_serializer=schema__pb2.ConversationRequest.SerializeToString,
-            response_deserializer=schema__pb2.ConversationResponse.FromString,
+        self.converseWithAgent = channel.unary_unary(
+            "/agepoyo.AgepoyoService/converseWithAgent",
+            request_serializer=agepoyo__pb2.ConversationRequest.SerializeToString,
+            response_deserializer=agepoyo__pb2.ConversationResponse.FromString,
             _registered_method=True,
         )
-        self.converseStream = channel.unary_stream(
-            "/agepoyo.AgepoyoService/converseStream",
-            request_serializer=schema__pb2.ConversationRequest.SerializeToString,
-            response_deserializer=schema__pb2.ConversationResponse.FromString,
+        self.converseWithAgentStream = channel.unary_stream(
+            "/agepoyo.AgepoyoService/converseWithAgentStream",
+            request_serializer=agepoyo__pb2.ConversationRequest.SerializeToString,
+            response_deserializer=agepoyo__pb2.ConversationResponse.FromString,
             _registered_method=True,
         )
 
@@ -32,13 +32,13 @@ class AgepoyoServiceStub(object):
 class AgepoyoServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def converse(self, request, context):
+    def converseWithAgent(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
-    def converseStream(self, request, context):
+    def converseWithAgentStream(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
@@ -47,15 +47,15 @@ class AgepoyoServiceServicer(object):
 
 def add_AgepoyoServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "converse": grpc.unary_unary_rpc_method_handler(
-            servicer.converse,
-            request_deserializer=schema__pb2.ConversationRequest.FromString,
-            response_serializer=schema__pb2.ConversationResponse.SerializeToString,
+        "converseWithAgent": grpc.unary_unary_rpc_method_handler(
+            servicer.converseWithAgent,
+            request_deserializer=agepoyo__pb2.ConversationRequest.FromString,
+            response_serializer=agepoyo__pb2.ConversationResponse.SerializeToString,
         ),
-        "converseStream": grpc.unary_stream_rpc_method_handler(
-            servicer.converseStream,
-            request_deserializer=schema__pb2.ConversationRequest.FromString,
-            response_serializer=schema__pb2.ConversationResponse.SerializeToString,
+        "converseWithAgentStream": grpc.unary_stream_rpc_method_handler(
+            servicer.converseWithAgentStream,
+            request_deserializer=agepoyo__pb2.ConversationRequest.FromString,
+            response_serializer=agepoyo__pb2.ConversationResponse.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -70,7 +70,7 @@ class AgepoyoService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def converse(
+    def converseWithAgent(
         request,
         target,
         options=(),
@@ -85,9 +85,9 @@ class AgepoyoService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/agepoyo.AgepoyoService/converse",
-            schema__pb2.ConversationRequest.SerializeToString,
-            schema__pb2.ConversationResponse.FromString,
+            "/agepoyo.AgepoyoService/converseWithAgent",
+            agepoyo__pb2.ConversationRequest.SerializeToString,
+            agepoyo__pb2.ConversationResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -100,7 +100,7 @@ class AgepoyoService(object):
         )
 
     @staticmethod
-    def converseStream(
+    def converseWithAgentStream(
         request,
         target,
         options=(),
@@ -115,9 +115,9 @@ class AgepoyoService(object):
         return grpc.experimental.unary_stream(
             request,
             target,
-            "/agepoyo.AgepoyoService/converseStream",
-            schema__pb2.ConversationRequest.SerializeToString,
-            schema__pb2.ConversationResponse.FromString,
+            "/agepoyo.AgepoyoService/converseWithAgentStream",
+            agepoyo__pb2.ConversationRequest.SerializeToString,
+            agepoyo__pb2.ConversationResponse.FromString,
             options,
             channel_credentials,
             insecure,
