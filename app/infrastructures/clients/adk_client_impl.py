@@ -1,9 +1,13 @@
+from contextlib import AsyncExitStack
 import os
 
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
-from google.adk.sessions.in_memory_session_service import BaseSessionService,InMemorySessionService
+from google.adk.sessions.in_memory_session_service import (
+    BaseSessionService,
+    InMemorySessionService,
+)
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 from google.genai.types import Content, Part
 from google.adk.tools.mcp_tool import MCPTool
@@ -13,19 +17,24 @@ from app.domains.conversation.llm_model import LlmModel
 from app.domains.conversation.request import ConversationRequest
 from app.domains.conversation.role import ConversationRole
 
+
 class AdkClientImpl(AgentClient):
     """Agent Client Using ADK."""
+
     APP_NAME = "adk_client_app"
     USER_ID = "user_0"
 
     async def ask(self, conversation_request: ConversationRequest) -> str:
         """Ask a question to the agent."""
 
+        common_exit_stack = AsyncExitStack()
+
         session_service = InMemorySessionService()
 
         runner = await self.__generate_agent_runner(
             session_service=session_service,
             conversation_request=conversation_request,
+            async_exit_stack=common_exit_stack,
         )
 
         session = session_service.create_session(
@@ -51,14 +60,16 @@ class AdkClientImpl(AgentClient):
                 text += "".join(
                     [part.text for part in event.content.parts if part.text]
                 )
-                print(text)
+
+        await common_exit_stack.aclose()
 
         return text
-    
+
     async def __generate_agent_runner(
         self,
         session_service: BaseSessionService,
         conversation_request: ConversationRequest,
+        async_exit_stack: AsyncExitStack,
     ) -> Runner:
         """Run the agent runner."""
 
@@ -66,7 +77,7 @@ class AdkClientImpl(AgentClient):
             name="adk_client",
             description="ADK Client",
             model=self.__llm_model_to_agent_model(conversation_request.model),
-            tools=[*await self.__fetch_tools()],
+            tools=[*await self.__fetch_tools(async_exit_stack)],
         )
 
         return Runner(
@@ -74,33 +85,30 @@ class AdkClientImpl(AgentClient):
             agent=agent,
             session_service=session_service,
         )
-    
-    async def __fetch_tools(self) -> list[MCPTool]:
+
+    async def __fetch_tools(self, common_exit_stack: AsyncExitStack) -> list[MCPTool]:
         """Fetch tools from the server.
-        
+
         将来的には、ask, askStreamのメソッドで指定できるようにする
         """
 
         fetch_tools, _ = await MCPToolset.from_server(
             connection_params=StdioServerParameters(
-                command='uvx',
-                args=[
-                    "mcp-server-fetch"
-                ],
+                command="uvx",
+                args=["mcp-server-fetch"],
             ),
+            async_exit_stack=common_exit_stack,
         )
 
         google_maps_tools, _ = await MCPToolset.from_server(
             connection_params=StdioServerParameters(
-                command='npx',
-                args=[
-                    '-y',
-                    '@modelcontextprotocol/server-google-maps'
-                ],
+                command="npx",
+                args=["-y", "@modelcontextprotocol/server-google-maps"],
                 env={
                     "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
-                }
-            )
+                },
+            ),
+            async_exit_stack=common_exit_stack,
         )
 
         return [
