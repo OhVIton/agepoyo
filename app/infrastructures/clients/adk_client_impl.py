@@ -1,15 +1,12 @@
-from contextlib import AsyncExitStack
-from typing import TYPE_CHECKING, AsyncGenerator
 import os
 
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
-from google.adk.sessions.in_memory_session_service import InMemorySessionService
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters, SseServerParams
+from google.adk.sessions.in_memory_session_service import BaseSessionService,InMemorySessionService
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 from google.genai.types import Content, Part
 from google.adk.tools.mcp_tool import MCPTool
-from google.adk.events import Event
 
 from app.domains.conversation.agent_client import AgentClient
 from app.domains.conversation.llm_model import LlmModel
@@ -20,25 +17,31 @@ class AdkClientImpl(AgentClient):
     """Agent Client Using ADK."""
     APP_NAME = "adk_client_app"
     USER_ID = "user_0"
-    SESSION_ID = "session_0"
 
     async def ask(self, conversation_request: ConversationRequest) -> str:
         """Ask a question to the agent."""
 
+        session_service = InMemorySessionService()
+
         runner = await self.__generate_agent_runner(
-            session_service=InMemorySessionService(),
+            session_service=session_service,
             conversation_request=conversation_request,
+        )
+
+        session = session_service.create_session(
+            app_name=self.APP_NAME,
+            user_id=self.USER_ID,
         )
 
         events = runner.run_async(
             user_id=self.USER_ID,
-            session_id=self.SESSION_ID,
+            session_id=session.id,
             new_message=Content(
                 parts=self.__conversation_to_agent_parts(conversation_request),
                 role=self.__role_to_agent_role(
                     conversation_request.latest_user_message().role
                 ),
-            )
+            ),
         )
 
         text = ""
@@ -54,7 +57,7 @@ class AdkClientImpl(AgentClient):
     
     async def __generate_agent_runner(
         self,
-        session_service: InMemorySessionService,
+        session_service: BaseSessionService,
         conversation_request: ConversationRequest,
     ) -> Runner:
         """Run the agent runner."""
@@ -64,12 +67,6 @@ class AdkClientImpl(AgentClient):
             description="ADK Client",
             model=self.__llm_model_to_agent_model(conversation_request.model),
             tools=[*await self.__fetch_tools()],
-        )
-
-        session_service.create_session(
-            app_name=self.APP_NAME,
-            user_id=self.USER_ID,
-            session_id=self.SESSION_ID,
         )
 
         return Runner(
