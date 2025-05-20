@@ -1,23 +1,19 @@
 from contextlib import AsyncExitStack
 from typing import TYPE_CHECKING
+import os
 
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters, SseServerParams
 from google.genai.types import Content, Part
+from google.adk.tools.mcp_tool import MCPTool
 
 from app.domains.conversation.agent_client import AgentClient
 from app.domains.conversation.llm_model import LlmModel
 from app.domains.conversation.request import ConversationRequest
 from app.domains.conversation.role import ConversationRole
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from google.adk.events import Event
-
 
 class AdkClientImpl(AgentClient):
     """Agent Client Using ADK."""
@@ -27,21 +23,12 @@ class AdkClientImpl(AgentClient):
 
         common_exit_stack = AsyncExitStack()
 
-        fetch_tools, _ = await MCPToolset.from_server(
-            connection_params=StdioServerParameters(
-                command='uvx',
-                args=[
-                    "mcp-server-fetch"
-                ],
-                common_exit_stack=common_exit_stack,
-            ),
-        )
 
         agent = Agent(
             name="adk_client",
             description="ADK Client",
             model=self.__llm_model_to_agent_model(conversation_request.model),
-            tools=[*fetch_tools],
+            tools=[*await self.__fetch_tools()],
         )
         session_service = InMemorySessionService()
 
@@ -83,6 +70,39 @@ class AdkClientImpl(AgentClient):
         await common_exit_stack.aclose()
 
         return text
+    
+    async def __fetch_tools(self) -> list[MCPTool]:
+        """Fetch tools from the server.
+        
+        将来的には、ask, askStreamのメソッドで指定できるようにする
+        """
+
+        fetch_tools, _ = await MCPToolset.from_server(
+            connection_params=StdioServerParameters(
+                command='uvx',
+                args=[
+                    "mcp-server-fetch"
+                ],
+            ),
+        )
+
+        google_maps_tools, _ = await MCPToolset.from_server(
+            connection_params=StdioServerParameters(
+                command='npx',
+                args=[
+                    '-y',
+                    '@modelcontextprotocol/server-google-maps'
+                ],
+                env={
+                    "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
+                }
+            )
+        )
+
+        return [
+            *fetch_tools,
+            *google_maps_tools,
+        ]
 
     def __llm_model_to_agent_model(self, llm_model: LlmModel) -> LiteLlm | str:
         match llm_model:
