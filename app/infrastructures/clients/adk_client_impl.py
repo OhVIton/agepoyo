@@ -1,5 +1,5 @@
 from contextlib import AsyncExitStack
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, AsyncGenerator
 import os
 
 from google.adk.agents import Agent
@@ -9,6 +9,7 @@ from google.adk.sessions.in_memory_session_service import InMemorySessionService
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters, SseServerParams
 from google.genai.types import Content, Part
 from google.adk.tools.mcp_tool import MCPTool
+from google.adk.events import Event
 
 from app.domains.conversation.agent_client import AgentClient
 from app.domains.conversation.llm_model import LlmModel
@@ -17,12 +18,46 @@ from app.domains.conversation.role import ConversationRole
 
 class AdkClientImpl(AgentClient):
     """Agent Client Using ADK."""
+    APP_NAME = "adk_client_app"
+    USER_ID = "user_0"
+    SESSION_ID = "session_0"
 
     async def ask(self, conversation_request: ConversationRequest) -> str:
         """Ask a question to the agent."""
 
-        common_exit_stack = AsyncExitStack()
+        runner = await self.__generate_agent_runner(
+            session_service=InMemorySessionService(),
+            conversation_request=conversation_request,
+        )
 
+        events = runner.run_async(
+            user_id=self.USER_ID,
+            session_id=self.SESSION_ID,
+            new_message=Content(
+                parts=self.__conversation_to_agent_parts(conversation_request),
+                role=self.__role_to_agent_role(
+                    conversation_request.latest_user_message().role
+                ),
+            )
+        )
+
+        text = ""
+        async for event in events:
+            print(event)
+            if event.content:
+                text += "".join(
+                    [part.text for part in event.content.parts if part.text]
+                )
+                print(text)
+
+        return text
+    
+    async def __generate_agent_runner(
+        self,
+        session_service: InMemorySessionService,
+        conversation_request: ConversationRequest,
+    ) -> Runner:
+        """Run the agent runner."""
 
         agent = Agent(
             name="adk_client",
@@ -30,46 +65,18 @@ class AdkClientImpl(AgentClient):
             model=self.__llm_model_to_agent_model(conversation_request.model),
             tools=[*await self.__fetch_tools()],
         )
-        session_service = InMemorySessionService()
-
-        app_name = "adk_client_app"
-        user_id = "user_0"
-        session_id = "session_0"
 
         session_service.create_session(
-            app_name=app_name,
-            user_id=user_id,
-            session_id=session_id,
+            app_name=self.APP_NAME,
+            user_id=self.USER_ID,
+            session_id=self.SESSION_ID,
         )
 
-        runner = Runner(
-            app_name=app_name,
+        return Runner(
+            app_name=self.APP_NAME,
             agent=agent,
             session_service=session_service,
         )
-
-        events = runner.run_async(
-            user_id=user_id,
-            session_id=session_id,
-            new_message=Content(
-                parts=self.__conversation_to_agent_parts(conversation_request),
-                role=self.__role_to_agent_role(
-                    conversation_request.latest_user_message().role
-                ),
-            ),
-        )
-
-        text = ""
-        async for event in events:
-            if event.content:
-                text += "".join(
-                    [part.text for part in event.content.parts if part.text]
-                )
-                print(text)
-
-        await common_exit_stack.aclose()
-
-        return text
     
     async def __fetch_tools(self) -> list[MCPTool]:
         """Fetch tools from the server.
