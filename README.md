@@ -11,11 +11,15 @@ Agent Development Kit (ADK)を用いて、ステートレスにエージェン�
 
 # インストール
 
-TODO: 記述
+```shell
+uv sync
+```
 
 # 起動
 
-TODO: 記述
+```shell
+PYTHONPATH=app/gen:. uv run app/main.py
+```
 
 # テスト
 
